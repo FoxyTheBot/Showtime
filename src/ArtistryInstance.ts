@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance} from "fastify";
+import fastify, { FastifyInstance } from "fastify";
 import CommandRoutes from "./utils/CommandRoutes";
 import { logger } from "./utils/logger";
 require("dotenv").config();
@@ -6,7 +6,7 @@ require("dotenv").config();
 export default class ArtistryInstance {
     private server: FastifyInstance;
     private commandRoutes: CommandRoutes;
-    
+
     constructor() {
         this.server = fastify();
         this.commandRoutes = new CommandRoutes();
