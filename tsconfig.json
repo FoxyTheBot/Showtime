@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": [
+      "esnext"
+    ],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "CommonJS",
+    "resolveJsonModule": true,
+    "outDir": "./build/",
+    "removeComments": true,
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "preserveConstEnums": true,
+    "newLine": "lf",
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": true,
+    "noImplicitThis": false,
+    "skipLibCheck": true
+  },
+}
