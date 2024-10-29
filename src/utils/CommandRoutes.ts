@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import ImageGenerator from "../image/ImageGenerator";
 
 export default class CommandRoutes {
@@ -6,6 +6,10 @@ export default class CommandRoutes {
 
     constructor() {
         this.generator = new ImageGenerator();
+        this.bindHandlers();
+    }
+
+    private bindHandlers() {
         this.generateEminem8MileVideo = this.generateEminem8MileVideo.bind(this);
         this.generateGirlfriendImage = this.generateGirlfriendImage.bind(this);
         this.generateGostoImage = this.generateGostoImage.bind(this);
@@ -15,6 +19,7 @@ export default class CommandRoutes {
         this.generateStonksImage = this.generateStonksImage.bind(this);
         this.generateModaImage = this.generateModaImage.bind(this);
     }
+
     registerRoutes(server: FastifyInstance) {
         server.post("/memes/gosto", this.generateGostoImage);
         server.post("/memes/windowserror", this.generateWindowsErrorImage);
@@ -26,59 +31,107 @@ export default class CommandRoutes {
         server.post("/memes/8mile", this.generateEminem8MileVideo);
     }
 
-    async generateEminem8MileVideo(req, res) {
-        const { contentType, url, size } = req.body;
-        const videoBuffer = await this.generator.generate8MileVideo(url, contentType, size);
+    async generateEminem8MileVideo(req: FastifyRequest, res: FastifyReply) {
+        const { contentType, url, size } = req.body as any;
 
+        if (!contentType || !url || !size) {
+            return res.status(400).send({
+                error: "Missing required parameters: contentType, url, and size are required.",
+            });
+        }
+
+        const videoBuffer = await this.generator.generate8MileVideo(url, contentType, size);
         res.header("Content-Type", "video/mp4").send(videoBuffer);
     }
 
-    async generateGirlfriendImage(req, res) {
-        const { avatar } = req.body;
+    async generateGirlfriendImage(req: FastifyRequest, res: FastifyReply) {
+        const { avatar } = req.body as any;
+
+        if (!avatar) {
+            return res.status(400).send({
+                error: "Missing required parameter: avatar is required.",
+            });
+        }
+
         const imageBuffer = await this.generator.generateGirlfriendImage(avatar);
-
         res.header("Content-Type", "image/png").send(imageBuffer);
     }
 
-    async generateGostoImage(req, res) {
-        const { asset1, asset2, text } = req.body;
+    async generateGostoImage(req: FastifyRequest, res: FastifyReply) {
+        const { asset1, asset2, text } = req.body as any;
+
+        if (!asset1 || !asset2 || !text) {
+            return res.status(400).send({
+                error: "Missing required parameters: asset1, asset2, and text are required.",
+            });
+        }
+
         const imageBuffer = await this.generator.generateGostoMeme(asset1, asset2, text);
-
         res.header("Content-Type", "image/png").send(imageBuffer);
     }
 
-    async generateWindowsErrorImage(req, res) {
-        const { text } = req.body;
+    async generateWindowsErrorImage(req: FastifyRequest, res: FastifyReply) {
+        const { text } = req.body as any;
+
+        if (!text) {
+            return res.status(400).send({
+                error: "Missing required parameter: text is required.",
+            });
+        }
+
         const imageBuffer = await this.generator.generateWindowsErrorImage(text);
-
         res.header("Content-Type", "image/png").send(imageBuffer);
     }
 
-    async generateLaranjoImage(req, res) {
-        const { text } = req.body;
+    async generateLaranjoImage(req: FastifyRequest, res: FastifyReply) {
+        const { text } = req.body as any;
+
+        if (!text) {
+            return res.status(400).send({
+                error: "Missing required parameter: text is required.",
+            });
+        }
+
         const imageBuffer = await this.generator.generateLaranjoImage(text);
-
         res.header("Content-Type", "image/png").send(imageBuffer);
     }
 
-    async generateNotStonksImage(req, res) {
-        const { text } = req.body;
+    async generateNotStonksImage(req: FastifyRequest, res: FastifyReply) {
+        const { text } = req.body as any;
+
+        if (!text) {
+            return res.status(400).send({
+                error: "Missing required parameter: text is required.",
+            });
+        }
+
         const imageBuffer = await this.generator.generateNotStonksImage(text);
-
         res.header("Content-Type", "image/png").send(imageBuffer);
     }
 
-    async generateStonksImage(req, res) {
-        const { text } = req.body;
+    async generateStonksImage(req: FastifyRequest, res: FastifyReply) {
+        const { text } = req.body as any;
+
+        if (!text) {
+            return res.status(400).send({
+                error: "Missing required parameter: text is required.",
+            });
+        }
+
         const imageBuffer = await this.generator.generateStonksImage(text);
-
         res.header("Content-Type", "image/png").send(imageBuffer);
     }
 
-    async generateModaImage(req, res) {
-        const { asset } = req.body;
-        const imageBuffer = await this.generator.generateModaImage(asset);
+    async generateModaImage(req: FastifyRequest, res: FastifyReply) {
+        const { asset } = req.body as any;
 
+        if (!asset) {
+            return res.status(400).send({
+                error: "Missing required parameter: asset is required.",
+            });
+        }
+
+        const imageBuffer = await this.generator.generateModaImage(asset);
         res.header("Content-Type", "image/png").send(imageBuffer);
     }
 }
