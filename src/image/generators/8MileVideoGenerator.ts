@@ -13,7 +13,6 @@ export default class EminemVideoGenerator {
     private MAX_AUDIO_SIZE: number = 1024 * 1024 * 8;
 
     async generateVideo(audio: string, contentType: string, size): Promise<Buffer> {
-        console.log(audio, contentType, size, ImageConstants.EMINEM_VIDEO);
         if (!contentType?.startsWith("audio") && !contentType?.startsWith("video")) {
             throw new Error("Invalid file type provided. Must be audio or video.");
         }
