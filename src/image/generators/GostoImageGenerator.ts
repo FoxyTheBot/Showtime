@@ -1,11 +1,11 @@
 import Canvas, { CanvasRenderingContext2D } from 'canvas';
 import { logger } from "../../utils/logger";
-import { ImageConstants } from "../../utils/ImageConstants";
+import path from 'path';
 
 export default class GostoMemeGenerator {
     private canvas: Canvas.Canvas;
     private context: CanvasRenderingContext2D;
-
+    private readonly GOSTO_IMAGE = path.resolve("assets", "naosomosiguais.png");
     constructor() {
         this.canvas = Canvas.createCanvas(1080, 1260);
         this.context = this.canvas.getContext("2d");
@@ -16,7 +16,7 @@ export default class GostoMemeGenerator {
             const firstImage = await Canvas.loadImage(image1);
             const secondImage = await Canvas.loadImage(image2);
 
-            const memeBackground = await Canvas.loadImage(ImageConstants.GOSTO_IMAGE);
+            const memeBackground = await Canvas.loadImage(this.GOSTO_IMAGE);
             this.context.drawImage(memeBackground, 0, 0, this.canvas.width, this.canvas.height);
 
             const resizedFirstImage = await this.resizeImage(firstImage, 301, 301);

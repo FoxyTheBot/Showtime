@@ -1,17 +1,18 @@
 import Canvas, { CanvasRenderingContext2D } from 'canvas';
-import { ImageConstants } from '../../utils/ImageConstants';
+import path from 'path';
 
 export default class WindowsErrorImageGenerator {
     private canvas: Canvas.Canvas;
     private context: CanvasRenderingContext2D;
-
+    private readonly WINDOWS_ERROR_IMAGE = path.resolve("assets", "windows_error.png");
+    
     constructor() {
         this.canvas = Canvas.createCanvas(380, 208);
         this.context = this.canvas.getContext("2d");
     }
 
     async generateImage(text: string): Promise<Buffer> {
-        const background = await Canvas.loadImage(ImageConstants.WINDOWS_ERROR_IMAGE);
+        const background = await Canvas.loadImage(this.WINDOWS_ERROR_IMAGE);
         this.context.drawImage(background, 0, 0, this.canvas.width, this.canvas.height);
 
         if (text.length > 30) {

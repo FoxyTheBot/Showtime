@@ -1,9 +1,10 @@
 import Canvas, { CanvasRenderingContext2D } from 'canvas';
-import { ImageConstants } from '../../utils/ImageConstants';
+import path from 'path';
 
 export default class NotStonksImageGenerator {
     private canvas: Canvas.Canvas;
     private context: CanvasRenderingContext2D;
+    private readonly NOT_STONKS_IMAGE = path.resolve("assets", "notstonks.png");
 
     constructor() {
         this.canvas = Canvas.createCanvas(800, 600);
@@ -11,7 +12,7 @@ export default class NotStonksImageGenerator {
     }
 
     async generateImage(text: string): Promise<Buffer> {
-        const background = await Canvas.loadImage(ImageConstants.NOT_STONKS_IMAGE);
+        const background = await Canvas.loadImage(this.NOT_STONKS_IMAGE);
         this.context.drawImage(background, 0, 0, this.canvas.width, this.canvas.height);
 
         this.context.strokeStyle = '#74037b';

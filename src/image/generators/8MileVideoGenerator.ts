@@ -1,18 +1,18 @@
-import { ImageConstants } from "../../utils/ImageConstants";
 import { Readable } from "stream";
 import ffmpeg from "fluent-ffmpeg";
 import fs from 'fs';
 import { promisify } from 'util';
-import fetch from 'node-fetch';
 import path from 'path';
+import fetch from 'node-fetch';
 import { logger } from "../../utils/logger";
 
 const unlinkAsync = promisify(fs.unlink);
 
 export default class EminemVideoGenerator {
     private MAX_AUDIO_SIZE: number = 1024 * 1024 * 8;
+    private readonly EMINEM_VIDEO_PATH = path.resolve("assets", "8mile.mp4");
 
-    async generateVideo(audio: string, contentType: string, size): Promise<Buffer> {
+    async generateVideo(audio: string, contentType: string, size: number): Promise<Buffer> {
         if (!contentType?.startsWith("audio") && !contentType?.startsWith("video")) {
             throw new Error("Invalid file type provided. Must be audio or video.");
         }
@@ -34,45 +34,39 @@ export default class EminemVideoGenerator {
                 await this.saveToFile(audio, audioTempPath);
             }
 
-            await this.saveToFile(ImageConstants.EMINEM_VIDEO, videoTempPath);
+            const output = new Readable({ read() {} });
 
-            const output = new Readable({ read() { } });
-
-            ffmpeg(videoTempPath)
+            ffmpeg(this.EMINEM_VIDEO_PATH)
                 .input(audioTempPath)
                 .complexFilter(`
-          [0:a]atrim=0:10[a0]; 
-          [1:a]atrim=0:9[a1]; 
-          [a0][a1]concat=n=2:v=0:a=1[a]; 
-          [0:v]trim=duration=19[v]
-        `)
-                .outputOptions(["-map [v]", "-map [a]", "-shortest", `-threads ${process.env.FFMPEG_THREADS}`, `-preset ${process.env.FFMPEG_PRESET}`])
+                    [0:a]atrim=0:10[a0]; 
+                    [1:a]atrim=0:9[a1]; 
+                    [a0][a1]concat=n=2:v=0:a=1[a]; 
+                    [0:v]trim=duration=19[v]
+                `)
+                .outputOptions([
+                    "-map [v]",
+                    "-map [a]",
+                    "-shortest",
+                    `-threads ${process.env.FFMPEG_THREADS || 2}`,
+                    `-preset ${process.env.FFMPEG_PRESET || "fast"}`
+                ])
                 .save(outputTempPath)
-                .on('end', async () => {
+                .on("end", async () => {
                     const fileStream = fs.createReadStream(outputTempPath);
-                    fileStream.on('data', chunk => output.push(chunk));
-                    fileStream.on('end', async () => {
+                    fileStream.on("data", chunk => output.push(chunk));
+                    fileStream.on("end", async () => {
                         output.push(null);
-                        Promise.all([
-                            unlinkAsync(audioTempPath),
-                            unlinkAsync(videoTempPath),
-                            unlinkAsync(outputTempPath)
-                        ]);
+                        await this.cleanUp(audioTempPath, videoTempPath, outputTempPath);
                     });
                 })
-                .on('error', async (err) => {
+                .on("error", async (err) => {
                     logger.error("Error generating video:", err);
-                    Promise.all([
-                        unlinkAsync(audioTempPath),
-                        unlinkAsync(videoTempPath),
-                        unlinkAsync(outputTempPath)
-                    ]);
+                    await this.cleanUp(audioTempPath, videoTempPath, outputTempPath);
                     throw new Error("An error occurred while generating the video.");
                 });
 
-            const buffer = await this.streamToBuffer(output);
-            return buffer;
-
+            return await this.streamToBuffer(output);
         } catch (error) {
             logger.error("Error generating video:", error);
             throw new Error("An error occurred while generating the video.");
@@ -83,8 +77,8 @@ export default class EminemVideoGenerator {
         return new Promise((resolve, reject) => {
             ffmpeg(videoPath)
                 .output(audioPath)
-                .on('end', resolve)
-                .on('error', reject)
+                .on("end", resolve)
+                .on("error", reject)
                 .run();
         });
     }
@@ -94,7 +88,8 @@ export default class EminemVideoGenerator {
         if (!response.ok) {
             throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
         }
-        const buffer = await response.buffer();
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
         await fs.promises.writeFile(filePath, buffer);
     }
 
@@ -105,5 +100,13 @@ export default class EminemVideoGenerator {
             stream.on("end", () => resolve(Buffer.concat(chunks)));
             stream.on("error", reject);
         });
+    }
+
+    private async cleanUp(...paths: string[]): Promise<void> {
+        await Promise.all(paths.map(path => unlinkAsync(path).catch((err: Error) => {
+            // Suppress all ENOENT errors because this error will occur if the file has already been deleted
+            if (err.message.includes("ENOENT")) return;
+            throw err;
+        })));
     }
 }
