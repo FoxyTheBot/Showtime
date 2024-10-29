@@ -1,30 +1,33 @@
 <p align="center">
-<h1 align="center">Foxy Aristry</h1>
-<p>A image and video generation microservice used in Foxy</p>
+  <h1 align="center">Foxy Artistry</h1>
+  <p>A microservice for image and video generation used by Foxy</p>
 </p>
 
 ## What is this?
-Originally launched back in 2021 to create images with text for Foxy, this service has evolved to modify images and videos for Foxy commands.
+Originally launched in 2021 to create images with text for Foxy, this service has evolved to modify images and videos for Foxy’s commands.
 
 ## Why Separate the Image Rendering Service from Foxy?
 
-1. **Scalability**: 
-   - We can spin up multiple instances of the image generator and spread them across different machines or containers. This makes it way easier to handle a lot of requests at once!
+1. **Scalability**:  
+   - We can spin up multiple instances of the image generator and spread them across different machines or containers, making it much easier to handle a large number of requests simultaneously.
 
-2. **Security**: 
-   - By keeping things separate, if a troublesome image tries to crash the process, it won’t take down Foxy with it. Other features can keep running smoothly.
+2. **Security**:  
+   - By separating the rendering process, even if a faulty image crashes the service, it won’t affect the rest of Foxy. Other features can continue running smoothly.
 
-3. **Better Resource Management**:
-   - When the rendering service is its own thing, we can fine-tune how we use resources like CPU and memory. This way, the rendering doesn’t slow down the rest of the app.
+3. **Better Resource Management**:  
+   - With the rendering as a dedicated service, we can fine-tune CPU and memory usage, ensuring that rendering tasks don’t impact the rest of the application.
 
-4. **Easier Maintenance**:
-   - It’s way simpler to update and fix things when the rendering service is separate. We can make improvements without messing with the whole Foxy setup.
+4. **Easier Maintenance**:  
+   - It's much simpler to update and maintain the rendering service independently, allowing us to make improvements without disrupting the entire Foxy setup.
 
-5. **Tech Flexibility**:
-   - We can pick and choose the best tools and libraries for rendering images without worrying about what works for the rest of the app. More freedom to choose!
+5. **Tech Flexibility**:  
+   - We have the freedom to use the best tools and libraries for image and video rendering without worrying about compatibility with the rest of the app.
 
-6. **Monitoring Made Simple**:
-   - Having a standalone service makes it easier to keep an eye on performance and health. We can set up specific monitoring and logging just for rendering.
+6. **Simplified Monitoring**:  
+   - A standalone service makes it easier to track performance and health. We can set up specific monitoring and logging for rendering tasks.
 
-7. **Smoother User Experience**:
-   - With everything running independently, users won’t face slowdowns or crashes caused by rendering issues. A better experience overall!
+7. **Smoother User Experience**:  
+   - Running services independently ensures that users don’t experience slowdowns or crashes caused by rendering issues, delivering a better overall experience.
+
+## Prerequisite: Install FFmpeg  
+To host this service, make sure FFmpeg is installed on your machine. It's required for processing videos. You can download and install it from the [official FFmpeg website](https://ffmpeg.org/download.html). Ensure the `ffmpeg` binary is accessible from the command line to allow the service to function correctly.
