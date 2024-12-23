@@ -13,6 +13,10 @@ export default class GostoMemeGenerator {
 
     async generateImage(image1: string, image2: string, text: string): Promise<Buffer> {
         try {
+            // Let's clean the canvas before drawing anything
+
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
             const firstImage = await Canvas.loadImage(image1);
             const secondImage = await Canvas.loadImage(image2);
 

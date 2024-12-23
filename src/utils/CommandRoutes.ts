@@ -21,6 +21,9 @@ export default class CommandRoutes {
     }
 
     registerRoutes(server: FastifyInstance) {
+        server.get("/", async (req, res) => {
+            res.status(200).send("Hello, world!");
+        });
         server.post("/memes/gosto", this.generateGostoImage);
         server.post("/memes/windowserror", this.generateWindowsErrorImage);
         server.post("/memes/girlfriend", this.generateGirlfriendImage);

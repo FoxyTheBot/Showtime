@@ -12,6 +12,10 @@ export default class NotStonksImageGenerator {
     }
 
     async generateImage(text: string): Promise<Buffer> {
+        // Let's clean the canvas before drawing anything
+        
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         const background = await Canvas.loadImage(this.NOT_STONKS_IMAGE);
         this.context.drawImage(background, 0, 0, this.canvas.width, this.canvas.height);
 
@@ -21,11 +25,6 @@ export default class NotStonksImageGenerator {
         this.context.font = '40px sans-serif';
         this.context.fillStyle = '#000000';
         this.context.fillText(text, this.canvas.width / 13.1, this.canvas.height / 14.1);
-
-        this.context.beginPath();
-        this.context.arc(125, 125, 100, 6, Math.PI * 2, true);
-        this.context.closePath();
-        this.context.clip();
 
         return this.canvas.toBuffer();
     }

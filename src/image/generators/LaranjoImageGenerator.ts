@@ -11,6 +11,10 @@ export default class LaranjoImageGenerator {
     }
 
     async generateImage(text: string): Promise<Buffer> {
+        // Let's clean the canvas before drawing anything
+
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         const background = await Canvas.loadImage(this.LARANJO_IMAGE);
 
         this.context.drawImage(background, 0, 0, this.canvas.width, this.canvas.height);
@@ -20,11 +24,6 @@ export default class LaranjoImageGenerator {
         this.context.font = '33px sans-serif';
         this.context.fillStyle = '#000000';
         this.context.fillText(text, this.canvas.width / 15.5, this.canvas.height / 13.5);
-
-        this.context.beginPath();
-        this.context.arc(125, 125, 100, 6, Math.PI * 2, true);
-        this.context.closePath();
-        this.context.clip();
 
         return this.canvas.toBuffer();
     }

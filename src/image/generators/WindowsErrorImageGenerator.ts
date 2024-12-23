@@ -5,13 +5,17 @@ export default class WindowsErrorImageGenerator {
     private canvas: Canvas.Canvas;
     private context: CanvasRenderingContext2D;
     private readonly WINDOWS_ERROR_IMAGE = path.resolve("assets", "windows_error.png");
-    
+
     constructor() {
         this.canvas = Canvas.createCanvas(380, 208);
         this.context = this.canvas.getContext("2d");
     }
 
     async generateImage(text: string): Promise<Buffer> {
+        // Let's clean the canvas before drawing anything
+
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         const background = await Canvas.loadImage(this.WINDOWS_ERROR_IMAGE);
         this.context.drawImage(background, 0, 0, this.canvas.width, this.canvas.height);
 
@@ -26,11 +30,6 @@ export default class WindowsErrorImageGenerator {
         this.context.font = '15px Sans';
         this.context.fillStyle = '#000000';
         this.context.fillText(text, this.canvas.width / 5.3, this.canvas.height / 2.2);
-
-        this.context.beginPath();
-        this.context.arc(125, 125, 100, 6, Math.PI * 2, true);
-        this.context.closePath();
-        this.context.clip();
 
         return this.canvas.toBuffer();
     }

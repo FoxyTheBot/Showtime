@@ -11,6 +11,10 @@ export default class GirlfriendImageGenerator {
     }
 
     async generateImage(avatarUrl: string): Promise<Buffer> {
+        // Let's clean the canvas before drawing anything
+
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         const memeBackground = await Canvas.loadImage(this.GIRLFRIEND_IMAGE);
         const avatarImage = await Canvas.loadImage(avatarUrl);
 

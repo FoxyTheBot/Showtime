@@ -5,13 +5,17 @@ export default class ModaImageGenerator {
     private canvas: Canvas.Canvas;
     private context: CanvasRenderingContext2D;
     private readonly MODA_IMAGE = path.resolve("assets", "moda.png");
-    
+
     constructor() {
         this.canvas = Canvas.createCanvas(589, 585);
         this.context = this.canvas.getContext('2d');
     }
 
     async generateImage(image: string): Promise<Buffer> {
+        // Let's clean the canvas before drawing anything
+
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         const memeBackground = await Canvas.loadImage(this.MODA_IMAGE);
 
         this.context.drawImage(memeBackground, 0, 0, this.canvas.width, this.canvas.height);
