@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "canvas": "^2.11.2",
+    "canvas": "^3.0.1",
     "discordeno": "^18.0.0",
     "dotenv": "^16.4.5",
     "fastify": "^5.0.0",
