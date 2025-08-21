@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">Foxy Artistry</h1>
+  <h1 align="center">✨ Showtime ✨</h1>
   <p>A microservice for image and video generation used by Foxy</p>
 </p>
 
